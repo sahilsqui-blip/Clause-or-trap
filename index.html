@@ -56,9 +56,10 @@ body::after{
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
   padding:1.5rem;
-  transition:opacity .3s ease;
+  background:var(--bg);
+  z-index:10;
 }
-.screen.hidden{opacity:0;pointer-events:none;display:none;}
+.screen.hidden{display:none !important;}
 
 /* ── START SCREEN ────────────────────────────── */
 #startScreen{gap:0}
@@ -543,12 +544,85 @@ body::after{
 .roast-cta a{color:#e05c4a;text-decoration:none;font-weight:600;}
 .roast-cta a:hover{text-decoration:underline;}
 
-/* ── RESPONSIVE ──────────────────────────────── */
-@media(max-width:480px){
-  .btn-row{flex-direction:column;}
-  .answer-btn{padding:14px 10px;}
+/* ── RESPONSIVE / MOBILE FIRST ───────────────── */
+
+/* Make game screen scrollable on small phones */
+#gameScreen{
+  justify-content:flex-start;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+@media(max-width:600px){
+  /* viewport units on mobile */
+  html,body{height:100%;width:100%;overflow:hidden;}
+
+  .screen{padding:1rem .85rem;}
+
+  /* start screen */
+  .start-title{font-size:2.6rem;}
+  .start-sub{font-size:13.5px;}
+  .start-rules{gap:.75rem;}
+  .rule-icon{font-size:1.1rem;}
+  .rule-text{font-size:11px;}
+  .start-btn{padding:13px 32px;font-size:12px;}
+
+  /* HUD */
+  .hud{margin-bottom:.65rem;}
+  .score-num{font-size:16px;}
+  .round-num{font-size:10px;}
+  .diff-pip{font-size:9px;}
+  .life{width:8px;height:8px;}
+
+  /* timer */
+  .timer-wrap{margin-bottom:.65rem;}
+
+  /* clause card — most important */
   .clause-card{max-width:100%;}
-  .start-rules{gap:1rem;}
+  .card-header{font-size:8px;padding:5px 12px;}
+  .card-body{padding:12px 14px 14px;}
+  .card-label{font-size:8.5px;}
+  .card-text{
+    font-size:12px;
+    line-height:1.65;
+    min-height:unset;
+  }
+
+  /* buttons */
+  .btn-row{
+    flex-direction:column;
+    gap:8px;
+    margin-top:.65rem;
+  }
+  .answer-btn{padding:14px 10px;}
+  .btn-label{font-size:12px;}
+  .btn-sub{font-size:10px;}
+
+  /* taunt */
+  .taunt-text{font-size:13px;}
+
+  /* feedback overlay */
+  .feedback-result{font-size:2rem;}
+  .feedback-explanation{font-size:13.5px;}
+
+  /* game over */
+  .go-name{font-size:1.5rem;}
+  .go-firm{font-size:1.5rem;}
+  .go-addr{font-size:10.5px;}
+  .go-stat-num{font-size:1.6rem;}
+  .go-tagline{font-size:.95rem;}
+  .go-actions{gap:6px;}
+  .go-btn{font-size:11px;padding:8px 14px;}
+
+  /* roast */
+  .roast-block{padding:12px 14px;}
+  .roast-text{font-size:.95rem;}
+}
+
+@media(max-width:380px){
+  .start-title{font-size:2.1rem;}
+  .card-text{font-size:11.5px;}
+  .go-stats{gap:1.25rem;}
 }
 </style>
 </head>
@@ -579,7 +653,7 @@ body::after{
     </div>
     <div class="rule">
       <div class="rule-icon">⏱</div>
-      <div class="rule-text">30 sec per clause</div>
+      <div class="rule-text">15 sec per clause</div>
     </div>
     <div class="rule">
       <div class="rule-icon">📈</div>
@@ -1010,7 +1084,7 @@ function loadClause() {
   const clause = state.clauses[state.round];
 
   // timer duration by difficulty
-  const durations = { easy: 30000, medium: 22000, hard: 15000 };
+  const durations = { easy: 15000, medium: 15000, hard: 15000 };
   state.timerDuration = durations[clause.difficulty] || 10000;
 
   // update UI

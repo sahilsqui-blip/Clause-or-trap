@@ -50,16 +50,28 @@ body::after{
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
 }
 
+/* ── WRAPPER ─────────────────────────────────── */
+#app{
+  width:100%;
+  height:100%;
+  position:relative;
+  overflow:hidden;
+}
+
 /* ── SCREENS ─────────────────────────────────── */
 .screen{
-  position:fixed;inset:0;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
+  position:absolute;
+  inset:0;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
   padding:1.5rem;
   background:var(--bg);
-  z-index:10;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
 }
-.screen.hidden{display:none !important;}
+.screen.active{display:flex;}
 
 /* ── START SCREEN ────────────────────────────── */
 #startScreen{gap:0}
@@ -546,13 +558,6 @@ body::after{
 
 /* ── RESPONSIVE / MOBILE FIRST ───────────────── */
 
-/* Make game screen scrollable on small phones */
-#gameScreen{
-  justify-content:flex-start;
-  overflow-y:auto;
-  -webkit-overflow-scrolling:touch;
-}
-
 @media(max-width:600px){
   /* viewport units on mobile */
   html,body{height:100%;width:100%;overflow:hidden;}
@@ -627,9 +632,10 @@ body::after{
 </style>
 </head>
 <body>
+<div id="app">
 
 <!-- ────────── START SCREEN ────────── -->
-<div class="screen" id="startScreen">
+<div class="screen active" id="startScreen">
   <div class="start-eyebrow">
     <span>YGS Legal</span>
   </div>
@@ -672,7 +678,7 @@ body::after{
 </div>
 
 <!-- ────────── GAME SCREEN ────────── -->
-<div class="screen hidden" id="gameScreen">
+<div class="screen" id="gameScreen">
 
   <div class="hud">
     <div class="lives" id="livesEl">
@@ -717,7 +723,7 @@ body::after{
 </div>
 
 <!-- ────────── FEEDBACK OVERLAY ────────── -->
-<div class="screen hidden" id="feedbackOverlay">
+<div class="screen" id="feedbackOverlay">
   <div class="feedback-result" id="feedbackResult">Correct</div>
   <div class="feedback-clause-answer" id="feedbackAnswer">FOUNDER-FRIENDLY</div>
   <p class="feedback-explanation" id="feedbackExpl"></p>
@@ -725,7 +731,7 @@ body::after{
 </div>
 
 <!-- ────────── GAME OVER ────────── -->
-<div class="screen hidden" id="gameOverScreen">
+<div class="screen" id="gameOverScreen">
   <div class="go-top">
     <div class="go-byline">
       <div class="go-name">Sahil Siddiqui</div>
@@ -773,7 +779,7 @@ body::after{
     <a class="go-btn" id="tweetBtn" href="#" target="_blank">Share Score</a>
     <a class="go-btn" href="https://twitter.com/qui_sid" target="_blank">DM Sahil</a>
   </div>
-</div>
+</div><!-- /#app -->
 
 <script>
 /* ── TAGLINE BANK (by score tier) ───────────── */
@@ -1055,14 +1061,8 @@ function shuffleClauses() {
 
 /* ── SCREEN MANAGEMENT ──────────────────────── */
 function show(id) {
-  ['startScreen','gameScreen','feedbackOverlay','gameOverScreen'].forEach(s => {
-    const el = document.getElementById(s);
-    el.classList.add('hidden');
-    el.style.display = 'none';
-  });
-  const active = document.getElementById(id);
-  active.classList.remove('hidden');
-  active.style.display = 'flex';
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
 /* ── START GAME ─────────────────────────────── */
